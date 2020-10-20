@@ -384,20 +384,87 @@
                 "TodoIAMRole"
             ]
         },
-        "GetTodoResolver": {
-            "Type": "AWS::AppSync::Resolver",
+        "QueryGetTodoLoad": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
-                "ApiId": {
-                    "Ref": "GetAttGraphQLAPIApiId"
-                },
                 "DataSourceName": {
                     "Fn::GetAtt": [
                         "TodoDataSource",
                         "Name"
                     ]
                 },
+                "FunctionVersion": "2018-05-29",
+                "ApiId": {
+                    "Ref": "GetAttGraphQLAPIApiId"
+                },
+                "Name": "QueryGetTodoLoad",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "QueryGetTodoLoad",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "QueryGetTodoLoad",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "QueryGetTodoResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Ref": "AppSyncApiId"
+                },
+                "TypeName": "Query",
                 "FieldName": "getTodo",
-                "TypeName": "Query",
+                "Kind": "PIPELINE",
+                "PipelineConfig": {
+                    "Functions": [
+                        {
+                            "Fn::GetAtt": [
+                                "QueryGetTodoLoad",
+                                "FunctionId"
+                            ]
+                        }
+                    ]
+                },
                 "RequestMappingTemplateS3Location": {
                     "Fn::Sub": [
                         "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
@@ -448,20 +515,87 @@
                 }
             }
         },
-        "ListTodoResolver": {
-            "Type": "AWS::AppSync::Resolver",
+        "QueryListTodosLoad": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
-                "ApiId": {
-                    "Ref": "GetAttGraphQLAPIApiId"
-                },
                 "DataSourceName": {
                     "Fn::GetAtt": [
                         "TodoDataSource",
                         "Name"
                     ]
                 },
+                "FunctionVersion": "2018-05-29",
+                "ApiId": {
+                    "Ref": "GetAttGraphQLAPIApiId"
+                },
+                "Name": "QueryListTodosLoad",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "QueryListTodosLoad",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "QueryListTodosLoad",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "QueryListTodosResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Ref": "AppSyncApiId"
+                },
+                "TypeName": "Query",
                 "FieldName": "listTodos",
-                "TypeName": "Query",
+                "Kind": "PIPELINE",
+                "PipelineConfig": {
+                    "Functions": [
+                        {
+                            "Fn::GetAtt": [
+                                "QueryListTodosLoad",
+                                "FunctionId"
+                            ]
+                        }
+                    ]
+                },
                 "RequestMappingTemplateS3Location": {
                     "Fn::Sub": [
                         "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
@@ -512,20 +646,150 @@
                 }
             }
         },
-        "CreateTodoResolver": {
-            "Type": "AWS::AppSync::Resolver",
+        "MutationCreateTodoInit": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
+                "DataSourceName": "NONE",
+                "FunctionVersion": "2018-05-29",
                 "ApiId": {
                     "Ref": "GetAttGraphQLAPIApiId"
                 },
+                "Name": "MutationCreateTodoInit",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationCreateTodoInit",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationCreateTodoInit",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "MutationCreateTodoLoad": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
+            "Properties": {
                 "DataSourceName": {
                     "Fn::GetAtt": [
                         "TodoDataSource",
                         "Name"
                     ]
                 },
+                "FunctionVersion": "2018-05-29",
+                "ApiId": {
+                    "Ref": "GetAttGraphQLAPIApiId"
+                },
+                "Name": "MutationCreateTodoLoad",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationCreateTodoLoad",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationCreateTodoLoad",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "MutationCreateTodoResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Ref": "AppSyncApiId"
+                },
+                "TypeName": "Mutation",
                 "FieldName": "createTodo",
-                "TypeName": "Mutation",
+                "Kind": "PIPELINE",
+                "PipelineConfig": {
+                    "Functions": [
+                        {
+                            "Fn::GetAtt": [
+                                "MutationCreateTodoInit",
+                                "FunctionId"
+                            ]
+                        },
+                        {
+                            "Fn::GetAtt": [
+                                "MutationCreateTodoLoad",
+                                "FunctionId"
+                            ]
+                        }
+                    ]
+                },
                 "RequestMappingTemplateS3Location": {
                     "Fn::Sub": [
                         "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
@@ -576,20 +840,87 @@
                 }
             }
         },
-        "UpdateTodoResolver": {
-            "Type": "AWS::AppSync::Resolver",
+        "MutationUpdateTodoLoad": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
-                "ApiId": {
-                    "Ref": "GetAttGraphQLAPIApiId"
-                },
                 "DataSourceName": {
                     "Fn::GetAtt": [
                         "TodoDataSource",
                         "Name"
                     ]
                 },
+                "FunctionVersion": "2018-05-29",
+                "ApiId": {
+                    "Ref": "GetAttGraphQLAPIApiId"
+                },
+                "Name": "MutationUpdateTodoLoad",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationUpdateTodoLoad",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationUpdateTodoLoad",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "MutationUpdateTodoResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Ref": "AppSyncApiId"
+                },
+                "TypeName": "Mutation",
                 "FieldName": "updateTodo",
-                "TypeName": "Mutation",
+                "Kind": "PIPELINE",
+                "PipelineConfig": {
+                    "Functions": [
+                        {
+                            "Fn::GetAtt": [
+                                "MutationUpdateTodoLoad",
+                                "FunctionId"
+                            ]
+                        }
+                    ]
+                },
                 "RequestMappingTemplateS3Location": {
                     "Fn::Sub": [
                         "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",
@@ -640,20 +971,87 @@
                 }
             }
         },
-        "DeleteTodoResolver": {
-            "Type": "AWS::AppSync::Resolver",
+        "MutationDeleteTodoLoad": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
-                "ApiId": {
-                    "Ref": "GetAttGraphQLAPIApiId"
-                },
                 "DataSourceName": {
                     "Fn::GetAtt": [
                         "TodoDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "deleteTodo",
+                "FunctionVersion": "2018-05-29",
+                "ApiId": {
+                    "Ref": "GetAttGraphQLAPIApiId"
+                },
+                "Name": "MutationDeleteTodoLoad",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationDeleteTodoLoad",
+                                        "req",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Sub": [
+                        "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/pipelineFunctions/${ResolverFileName}",
+                        {
+                            "S3DeploymentBucket": {
+                                "Ref": "S3DeploymentBucket"
+                            },
+                            "S3DeploymentRootKey": {
+                                "Ref": "S3DeploymentRootKey"
+                            },
+                            "ResolverFileName": {
+                                "Fn::Join": [
+                                    ".",
+                                    [
+                                        "MutationDeleteTodoLoad",
+                                        "res",
+                                        "vtl"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "MutationDeleteTodoResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Ref": "AppSyncApiId"
+                },
                 "TypeName": "Mutation",
+                "FieldName": "deleteTodo",
+                "Kind": "PIPELINE",
+                "PipelineConfig": {
+                    "Functions": [
+                        {
+                            "Fn::GetAtt": [
+                                "MutationDeleteTodoLoad",
+                                "FunctionId"
+                            ]
+                        }
+                    ]
+                },
                 "RequestMappingTemplateS3Location": {
                     "Fn::Sub": [
                         "s3://${S3DeploymentBucket}/${S3DeploymentRootKey}/resolvers/${ResolverFileName}",

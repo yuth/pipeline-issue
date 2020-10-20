@@ -1,0 +1,6 @@
+## [Start] Resolver :  Mutation.createTodo Slot: init type: RESPONSE. **
+#if( $ctx.error )
+  $util.error($ctx.error.message, $ctx.error.type)
+#end
+$util.toJson($ctx.result)
+## [End] Resolver :  Mutation.createTodo Slot: init type: RESPONSE. **

@@ -1,7 +1,8 @@
-{
-  "version": "2018-05-29",
-  "operation": "GetItem",
-  "key": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
-  "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
-} #end
-}
+## [Start] Stash resolver specific context.. **
+$util.qr($ctx.stash.put("typeName", "Query"))
+$util.qr($ctx.stash.put("fieldName", "getTodo"))
+$util.qr($ctx.stash.put("authCondition", {}))
+$util.qr($ctx.stash.put("condition", {}))
+$util.qr($ctx.stash.put("metadata", {}))
+{}
+## [End] Stash resolver specific context.. **

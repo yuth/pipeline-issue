@@ -1,0 +1,43 @@
+#set( $conditionObj = {
+  "and":   []
+} )
+#if( !$ctx.stash.authCondition.isEmpty() )
+  $util.qr($conditionObj["and"].add($ctx.stash.authCondition))
+#end
+#if( !$ctx.stash.condition.isEmpty() )
+  $util.qr($conditionObj["and"].add($ctx.stash.condition))
+#end
+#if( $context.args.filter )
+  $util.qr($conditionObj["and"].add($ctx.args.filter))
+#end
+#set( $limit = $util.defaultIfNull($context.args.limit, 100) )
+#set( $ListRequest = {
+  "version": "2018-05-29",
+  "limit": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = $context.args.nextToken )
+#end
+#if( $context.stash.metadata.index )
+  #set( $ListRequest.index = $context.stash.metadata.index )
+#end
+#set( $condition = $util.parseJson($util.transform.toDynamoDBFilterExpression($conditionObj)) )
+#if( $condition.expressionValues.isEmpty() )
+  #set( $condition = $util.map.copyAndRemoveAllKeys($condition, ["expressionValues"]) )
+#end
+#if( !$util.isNullOrEmpty($condition.expression) )
+  #set( $ListRequest.filter = $condition )
+#end
+#if( !$util.isNull($context.stash.metadata.modelQueryExpression)
+                        && !$util.isNullOrEmpty($context.stash.metadata.modelQueryExpression.expression) )
+  $util.qr($ListRequest.put("operation", "Query"))
+  $util.qr($ListRequest.put("query", $context.stash.metadata.modelQueryExpression))
+  #if( !$util.isNull($ctx.args.sortDirection) && $ctx.args.sortDirection == "DESC" )
+    #set( $ListRequest.scanIndexForward = false )
+  #else
+    #set( $ListRequest.scanIndexForward = true )
+  #end
+#else
+  $util.qr($ListRequest.put("operation", "Scan"))
+#end
+$util.toJson($ListRequest)

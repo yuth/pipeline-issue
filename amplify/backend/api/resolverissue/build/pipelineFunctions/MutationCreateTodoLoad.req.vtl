@@ -1,0 +1,42 @@
+## [Start] Prepare DynamoDB PutItem Request. **
+#set( $conditionObj = {
+  "and":   []
+} )
+$util.qr($context.args.input.put("__typename", "Todo"))
+#if( !$context.stash.metadata.modelObjectKey )
+  $util.qr($conditionObj["and"].add({"id": {"attributeExists": false}}))
+#else
+  #set( $keyCondition = [] )
+  #foreach( $entry in $context.stash.metadata.modelObjectKey.entrySet() )
+    #set( $keyCond = {
+  "$entry.key": {
+      "attributeExists": false
+  }
+} )
+    $util.qr($keyCondition.add($keyCond))
+  #end
+  $util.qr($conditionObj["and"].add({"and": $keyCondition}))
+#end
+#if( $context.args.condition )
+  $util.qr($conditionObj["and"].add($context.args.condition))
+#end
+#if( !$context.stash.authCondition.isEmpty() )
+  $util.qr($conditionObj["and"].add($context.stash.authCondition))
+#end
+#if( !$context.stash.condition.isEmpty() )
+  $util.qr($conditionObj["and"].add($context.stash.condition))
+#end
+#set( $condition = $util.parseJson($util.transform.toDynamoDBFilterExpression($conditionObj)) )
+#if( $condition.expressionValues.isEmpty() )
+  #set( $condition = $util.map.copyAndRemoveAllKeys($condition, ["expressionValues"]) )
+#end
+{
+  "version": "2018-05-29",
+  "operation": "PutItem",
+  "key": #if( $context.stash.metadata.modelObjectKey ) $util.toJson($context.stash.metadata.modelObjectKey) #else {
+  "id":   $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+} #end,
+  "attributeValues": $util.dynamodb.toMapValuesJson($context.args.input),
+  "condition": $util.toJson($condition)
+}
+## [End] Prepare DynamoDB PutItem Request. **

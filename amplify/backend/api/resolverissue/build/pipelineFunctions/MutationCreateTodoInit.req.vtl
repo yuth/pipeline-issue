@@ -1,0 +1,13 @@
+## [Start] Resolver :  Mutation.createTodo Slot: init type: REQUEST. **
+## [Start] Set default values. **
+$util.qr($context.args.input.put("id", $util.defaultIfNull($ctx.args.input.id, $util.autoId())))
+#set( $createdAt = $util.time.nowISO8601() )
+## Automatically set the createdAt timestamp. **
+$util.qr($context.args.input.put("createdAt", $util.defaultIfNull($ctx.args.input.createdAt, $createdAt)))
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put("updatedAt", $util.defaultIfNull($ctx.args.input.updatedAt, $createdAt)))
+## [End] Set default values. **
+## [End] Resolver :  Mutation.createTodo Slot: init type: REQUEST. **
+## [Start] End of slot. **
+$util.toJson({})
+## [End] End of slot. **

@@ -1,0 +1,43 @@
+#set( $conditionObj = {
+  "and":   []
+} )
+#if( $context.stash.metadata.modelObjectKey )
+  #set( $keyCondition = [] )
+  #foreach( $entry in $context.stash.metadata.modelObjectKey.entrySet() )
+    #set( $keyCond = {
+  "$entry.key": {
+      "attributeExists": true
+  }
+} )
+    $util.qr($keyCondition.add($keyCond))
+  #end
+  $util.qr($conditionObj["and"].add({"and": $keyCondition}))
+#else
+  #set( $keyCondition = {
+  "id": {
+      "attributeExists": true
+  }
+} )
+  $util.qr($conditionObj["and"].add($keyCondition))
+#end
+#if( !$ctx.stash.authCondition.isEmpty() )
+  $util.qr($conditionObj["and"].add($ctx.stash.authCondition))
+#end
+#if( !$ctx.stash.condition.isEmpty() )
+  $util.qr($conditionObj["and"].add($ctx.stash.condition))
+#end
+#if( $context.args.condition )
+  $util.qr($conditionObj["and"].add($context.args.condition))
+#end
+#set( $condition = $util.parseJson($util.transform.toDynamoDBFilterExpression($conditionObj)) )
+#if( $condition.expressionValues.isEmpty() )
+  #set( $condition = $util.map.copyAndRemoveAllKeys($condition, ["expressionValues"]) )
+#end
+{
+  "version": "2018-05-29",
+  "operation": "DeleteItem",
+  "key": #if( $context.stash.metadata.modelObjectKey ) $util.toJson($context.stash.metadata.modelObjectKey) #else {
+  "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+} #end,
+  "condition": $util.toJson($condition)
+}

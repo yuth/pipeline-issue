@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "operation": "GetItem",
+  "key": #if( $context.stash.metadata.modelObjectKey ) $util.toJson($context.stash.metadata.modelObjectKey) #else {
+  "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+} #end
+}
